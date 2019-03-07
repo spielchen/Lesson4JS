@@ -1,95 +1,106 @@
-let money, 
-		time;
+var budget,
+		nameShop,
+		time,
+		price,
+		employers;
 
-function start (){
-	 money = +prompt("Ваш бюджет на месяц?");
-	 time = prompt("Введите дату в формате YYYY-MM-DD");
 
-	 while(isNaN(money) || money == "" || money == null){
-	 		money = +prompt("Ваш бюджет на месяц?");
-	 }
+function start() {
+	budget = prompt("Ваш бюджет на месяц?",'');
+
+	while (isNaN(budget) || budget == "" || budget == null){
+		budget = prompt("Ваш бюджет?,''");
+	}
+
+	nameShop = prompt("Название вашего магазина?",'').toUpperCase();
+	time = 21;
 }
+
 start();
 
-let appData = {
-		money,
-		time, 
-		expenses: {},
-		income:[],
-		optionalExpenses:{},
-		savings: true,
-		chooseExpenses: function(){
-			for (let i = 0; i < 2; i++) { 
-				let a = prompt("Введите обязательную статью расходов в этом месяце"), 
-						b = prompt("Во сколько обойдется?"); 
-				if ( (typeof(a)) === 'string' && (typeof(a)) != null && (typeof(b)) != null 
-				&& a != '' && b != '' && a.length <50) { 
-						console.log('done') 
-						appData.expenses[a] = b; 
-				}	else {
-					alert("Введите статью расходов!");
-					console.log('Была ошибка');
-					i--;
-				};
-		};
-	},
-	detectDayBudget: function(){
-		appData.moneyPerDay = (appData.money / 30).toFixed();
-		alert('Бюджет за 1 день: '+ (appData.money / 30).toFixed());
-	},
-	detectLevel: function(){
-		if (appData.moneyPerDay < 100){
-					console.log('Минимальный уровень достатка')
-				} else if ( appData.moneyPerDay > 100 && appData.moneyPerDay < 2000) {
-					console.log('Средний уровень достатка');
-				} else if ( appData.moneyPerDay > 2000) {
-					console.log('Высокий уровень достатка');
-				} else {
-					console.log('произошла ошибка')
-				}
-	},
-	checkSavings: function(){
-		if(appData.savings == true ) {
-			let save = +prompt('Какая сумма накопления?'),
-					percent = +prompt('Под какой процент?');
-			appData.monthIncome = save/100/12*percent;
-			alert('Доход в месяц с вашего депозита: ' + appData.monthIncome);
-		}
-	},
-	chooseOptExpenses: function(){
-		for(let a = 0; a < 3; a++) {
- 		let optExpenses = prompt('Статья необязательных расходов?');
-			appData.optionalExpenses[a + 1] = optExpenses;
-	}
-	console.log(appData.optionalExpenses);
-	},
-	chooseIncome: function chooseIncome(){
-		let items = prompt("Что принесет дополнительный доход?(Перечислить через запятую)",'');
-				while (!isNaN(items) || items == null || items == ""){
-								console.log('Все верно!');
-								items = prompt("Что принесет дополнительный доход?(Перечислить через запятую)",'');
-							};
-		let arr = items.split(",");
-		for (let i = 0; i < arr.length; i++){
-			if (Number(arr[i])){
-				alert(arr[i] + '- это число');
+var mainList = {
+		budget,
+		nameShop, 
+		shopGoods: [],
+		employers:{},
+		openShop: false,
+		discount: true,
+		shopItems: [],
+		chooseGoods:  function chooseGoods(){
+		for (var i = 0; i < 3; i++) {
+			var a = prompt("Какой тип товаров будем продавать?",'');
+			
+			if ((typeof(a)) === 'string' && a != '' && a.length < 50) {
+				console.log('Все верно!');
+				mainList.shopGoods[i] = a;
 			} else {
-				appData.income.push(arr[i])
+				alert("Товар введите!");
+				console.log('Была ошибка');
+				i--;
 			}
+ 		}
+	},
+	workTime: function workTime(time){
+		if (time < 0){
+			console.log('Такого не может быть!');
+		} else if (time > 8 && time < 20){
+			console.log('Время работать');
+			mainList.openShop = true;
+		} else if (time < 24) {
+			console.log('Уже слишком поздно!');
+		} else {
+			console.log('В сутках только 24 часа!');
 		}
-		appData.income.push(prompt("Может что-то еще?",''));
-		appData.income.sort();
-		console.log('Способы доп. заработка: ');
-		appData.income.forEach(function(item, i, arr) {
+	},
+	dayBudget: function dayBudget(){
+		console.log('Бюджет за 1 день: '+Math.floor(budget/30));
+	},
+	giveDiscount: function giveDiscount() {
+		var price = prompt("Цена");
+		var priceDiscount;
+
+		while (isNaN(price) || price == "" || price == null){
+			price = prompt("Цена?");
+		}
+		if (mainList.discount === true) {
+			priceDiscount = Math.ceil((price*0.8)*100)/100;
+			console.log('Цены со скидкой: '+ priceDiscount + ' евро');
+		} else {
+			console.log('Цена товара без скидки: '+ price + ' евро');
+		}
+	},
+	inviteEmployers: function inviteEmployers () {
+		for(let a = 0; a < 4; a++) {
+	 		let person = prompt('Введите имя нового сотрудника:','');
+			mainList.employers[a + 1] = person;
+	}
+		//for(var n = 0; n < mainList.employers.length; n++){
+	   //mainList.employers[n] = ( n + 1 ) + '.' + mainList.employers[n];
+	//}
+		console.log(mainList.employers);
+	},
+	chooseShopItem: function chooseShopItem(){
+		let items = prompt("Перечислите ваши товары через запятую",'');
+				if ((typeof(items)) === 'string' && items != '' && items.length < 50) {
+								console.log('Все верно!');
+							} else {
+								alert("Товар введите!");
+								console.log('Была ошибка');
+								items = prompt("Перечислите ваши товары через запятую",'');
+							};
+		mainList.shopItems = items.split(",");
+		mainList.shopItems.push(prompt("Подождите, еще ",''));
+		mainList.shopItems.sort();
+		console.log('Тут вы можете купить: ');
+		mainList.shopItems.forEach(function(item, i, arr) {
 			++i;
 			console.log(i + ": " + item);
 		});
 	}
 };
-console.log('Наша программа включает в себя данные: ');
-for ( let key in appData){
- 	console.log(key + appData);
+ 
+ for ( let key in mainList){
+ 	console.log('Наш магазин включает в себя: ' + key + mainList);
  }
 
-console.log(appData.expenses);
-
+console.log(mainList);
